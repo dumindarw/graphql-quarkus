@@ -1,0 +1,17 @@
+scalar Date
+
+type Group {
+  id: String
+  name: String
+  createdBy: String
+  createdDate: Date
+  blacklisted: Boolean
+}
+
+type Query {
+  allGroups(isBlackListed: Boolean = false): [Group]
+}
+
+type Mutation {
+  addGroup( name: String, createdBy: String): Boolean
+}

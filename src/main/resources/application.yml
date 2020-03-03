@@ -1,3 +1,11 @@
 quarkus:
   http:
     port: 8088
+  datasource:
+    url: vertx-reactive:mysql://10.0.6.116:3306/test_db
+    username: medisoftuser
+    password: medisoft789
+
+group:
+  schema:
+    create: true
