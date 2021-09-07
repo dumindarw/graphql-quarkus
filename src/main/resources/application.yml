@@ -1,10 +1,16 @@
 quarkus:
   http:
     port: 8088
+    cors: true
+#      methods: GET,PUT,POST
+#      origins: http://localhost:18080,http://foo:com,http://www:bar:io,/https://([a-z0-9\\-_]+)\\:app\\:mydomain\\:com/
+
   datasource:
-    url: vertx-reactive:mysql://10.0.6.116:3306/test_db
-    username: medisoftuser
-    password: medisoft789
+    #url: vertx-reactive:mysql://127.0.0.1:3306/groupdb
+    reactive:
+      url: mariadb://127.0.0.1:3309/groupdb
+    username: gruser
+    password: gr789
 
 group:
   schema:

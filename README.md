@@ -1,39 +1,65 @@
-# quarkus-graphql project
+# group-service Project
 
-# GraphQL API
+http://localhost:8088/q/graphql-ui/
 
-query {
-  allGroups {
-    id,
-    name
+```graphql
+
+#Mutations
+
+mutation{
+  addGroup(
+    name: "ABC Group", 
+    createdBy: "Duminda", 
+    location: {
+      type:"Feature", 
+      geometry: {
+        type: "Point", coordinates: [80.31888, 8.1007]
+      },
+      properties:{
+        name: "ABC Group Location"
+      }
+    }
+  )
+}
+
+#Queries 
+
+query{
+  allGroups(isBlackListed: false){
+    location{
+      geometry{
+        coordinates
+      }
+      properties{
+        name
+      }
+    }
+    id
+    createdBy
   }
 }
 
-mutation{
-  addGroup(name:"TestGroup",createdBy:"Duminda")
+# Fragments 
+
+fragment Location on Group {
+    location {
+        type
+        geometry {
+            coordinates
+            type
+        }    properties {
+            name
+        }
+    }
 }
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
+query GetGroups($isBlackListed: Boolean) {
+    allGroups(isBlackListed: $isBlackListed) {
+        id
+        name
+        createdDate
+        ...Location
+        __typename  }
+}
 
-## Running the application in dev mode
-
-You can run your application in dev mode that enables live coding using:
 ```
-./mvnw quarkus:dev
-```
-
-## Packaging and running the application
-
-The application is packageable using `./mvnw package`.
-It produces the executable `quarkus-graphql-1.0.0-SNAPSHOT-runner.jar` file in `/target` directory.
-Be aware that it’s not an _über-jar_ as the dependencies are copied into the `target/lib` directory.
-
-The application is now runnable using `java -jar target/quarkus-graphql-1.0.0-SNAPSHOT-runner.jar`.
-
-## Creating a native executable
-
-You can create a native executable using: `./mvnw package -Pnative`.
-
-Or you can use Docker to build the native executable using: `./mvnw package -Pnative -Dquarkus.native.container-build=true`.
-
-You can then execute your binary: `./target/quarkus-graphql-1.0.0-SNAPSHOT-runner`

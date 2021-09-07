@@ -3,15 +3,47 @@ scalar Date
 type Group {
   id: String
   name: String
+  location: GeoJSON
   createdBy: String
   createdDate: Date
   blacklisted: Boolean
 }
 
+input GeoJSONInput {
+  type: String
+  geometry: GeometryInput
+  properties: GeoJSONPropertiesInput
+}
+
+type GeoJSON {
+  type: String
+  geometry: Geometry
+  properties: GeoJSONProperties
+}
+
+type Geometry {
+  type: String
+  coordinates: [Float]
+}
+
+input GeometryInput {
+  type: String
+  coordinates: [Float]
+}
+
+type GeoJSONProperties {
+  name: String
+}
+
+input GeoJSONPropertiesInput {
+  name: String
+}
+
 type Query {
   allGroups(isBlackListed: Boolean = false): [Group]
+  groupById(id: String): Group
 }
 
 type Mutation {
-  addGroup( name: String, createdBy: String): Boolean
+  addGroup( name: String, createdBy: String, location: GeoJSONInput): Boolean
 }

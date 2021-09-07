@@ -1,11 +1,16 @@
-CREATE TABLE `tbl_mygroups` (
+CREATE DATABASE IF NOT EXISTS groupdb;
+USE  groupdb;
+CREATE USER 'gruser'@'%' IDENTIFIED BY 'gr789';
+GRANT ALL ON groupdb.* TO 'gruser'@'%';
+FLUSH PRIVILEGES;
+
+CREATE TABLE `tbl_groups` (
 	`id` VARCHAR(50) NOT NULL DEFAULT '',
 	`name` VARCHAR(100) NULL DEFAULT NULL,
+	`location` LONGTEXT,
 	`createdBy` VARCHAR(50) NULL DEFAULT NULL,
 	`createdDate` DATE NULL DEFAULT NULL,
 	`blacklisted` INT(11) NULL DEFAULT NULL,
+	CHECK (JSON_VALID(location)),
 	PRIMARY KEY (`id`)
-)
-COLLATE='utf8mb4_general_ci'
-ENGINE=InnoDB
-;
+);

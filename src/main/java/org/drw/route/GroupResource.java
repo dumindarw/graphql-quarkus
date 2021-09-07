@@ -1,5 +1,15 @@
 package org.drw.route;
 
+import io.vertx.core.Vertx;
+import io.vertx.ext.web.Router;
+import io.vertx.ext.web.handler.graphql.GraphQLHandler;
+
+import javax.enterprise.event.Observes;
+import javax.inject.Inject;
+import javax.ws.rs.Path;
+
+import io.vertx.ext.web.handler.BodyHandler;
+
 import graphql.GraphQL;
 import graphql.scalars.ExtendedScalars;
 import graphql.schema.GraphQLSchema;
@@ -7,14 +17,7 @@ import graphql.schema.idl.RuntimeWiring;
 import graphql.schema.idl.SchemaGenerator;
 import graphql.schema.idl.SchemaParser;
 import graphql.schema.idl.TypeDefinitionRegistry;
-import io.vertx.core.Vertx;
-import io.vertx.ext.web.Router;
-import io.vertx.ext.web.handler.graphql.GraphQLHandler;
-import org.drw.repo.GroupService;
-
-import javax.enterprise.event.Observes;
-import javax.inject.Inject;
-import javax.ws.rs.Path;
+import org.drw.service.GroupService;
 
 @Path("/")
 public class GroupResource {
@@ -23,14 +26,16 @@ public class GroupResource {
     Vertx vertx;
 
     @Inject
-    GroupService taskRepo;
+    GroupService groupService;
 
     public void init(@Observes Router router) {
 
         GraphQL graphQL = setupGraphQL();
         GraphQLHandler graphQLHandler = GraphQLHandler.create(graphQL);
 
-        router.route("/graphql").handler(graphQLHandler);
+        router.route().handler(BodyHandler.create());
+        router.route("/graphql")
+            .handler(graphQLHandler);
     }
 
     private GraphQL setupGraphQL(){
@@ -41,8 +46,9 @@ public class GroupResource {
         TypeDefinitionRegistry typeDefinitionRegistry = schemaParser.parse(schema);
 
         RuntimeWiring runtimeWiring = RuntimeWiring.newRuntimeWiring()
-                .type("Query", builder-> builder.dataFetcher("allGroups", taskRepo::allAvailableGroups))
-                .type("Mutation",builder -> builder.dataFetcher("addGroup", taskRepo::addGroup))
+                .type("Query", builder-> builder.dataFetcher("allGroups", groupService::allAvailableGroups))
+                .type("Mutation",builder -> builder.dataFetcher("addGroup", groupService::addGroup))
+                .type("Query",builder -> builder.dataFetcher("groupById", groupService::getGroupById))
                 .scalar(ExtendedScalars.Date)
                 .build();
 
